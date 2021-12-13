@@ -1,0 +1,48 @@
+<html>
+<head></head>
+<body>
+<div></div>
+<script>
+  var valueAfterDelay = function(value, interested) {
+    setTimeout(function() { interested(value); }, 1000);
+  };
+  var updateDiv = function(text) {
+    var div = document.querySelector("div");
+    for (var child; child = div.firstChild;) {
+      div.removeChild(child);
+    }
+    div.appendChild(document.createTextNode(text));
+  };
+
+  var getAsync = function(value) {
+    return new Promise(
+      function(succeed, fail) {
+        valueAfterDelay(value, function(value) { succeed(value); });
+      }
+    );
+  };
+
+  (function() {
+    getAsync("Hi Paul")
+    .then(
+      function(v){
+        return v + ". How are you?";
+      }
+    ).then(
+      function(v){
+        return getAsync(v + " Not so bad!");
+      }
+    ).then(
+      function(v){
+        updateDiv(v);
+        //throw new Error("Oh dear!");
+      }
+    ).catch(
+      function(e){
+        updateDiv(e)
+      }
+    );
+  }())
+</script>
+</body>
+</html>

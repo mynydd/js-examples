@@ -1,0 +1,38 @@
+<html>
+<head></head>
+<!--
+Demonstrates how forEach doesn't help you avoid the perils of
+working with live node lists.
+-->
+<body>
+
+<p data-classified="secret">The launch code is 0000000.</p>
+<p data-classified="secret">I have two feet.</p>
+<p data-classified="secret">The password is xyz</p>
+<p data-classified="secret">The code name is Bond.</p>
+<p data-classified="secret">I am hungry.</p>
+<script>
+  var iterations = 0;
+  var paras = document.body.getElementsByTagName("p");
+  Array.prototype.forEach.call(paras, function(para) {
+    iterations += 1;
+    if (para.getAttribute("data-classified") == "secret")
+      para.parentNode.removeChild(para);
+    });
+  console.log('iterations:', iterations);
+</script>
+<!--
+<script>
+  var paras = document.body.getElementsByTagName("p");
+  var iterations = 0;
+  for ( var i = 0; i < paras.length; i++ ) {
+    iterations += 1;
+    var para = paras[i];
+    if (para.getAttribute("data-classified") == "secret")
+      para.parentNode.removeChild(para);
+  };
+  console.log('iterations:', iterations);
+</script>
+-->
+</body>
+</html>
