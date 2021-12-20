@@ -116,16 +116,14 @@ $(document).ready(function() {
     let cancelButton = createChildOf(modalFooter, "button", ["btn", "btn-secondary"], {
       "data-dismiss":"modal"});
     appendTextNodeTo(cancelButton, "Cancel");
+    cancelButton.onclick = event => textarea.value = listItem.notes;
     let saveButton = createChildOf(modalFooter, "button", ["btn", "btn-secondary"], {
       "data-dismiss":"modal"});
     appendTextNodeTo(saveButton, "Save");
-    let updateFunc = function() {
+    saveButton.onclick = function(event) {
       listItem.notes = textarea.value;
       textarea.replaceChildren(listItem.notes);
       cardText.replaceChildren(listItem.notes);
-    };
-    saveButton.onclick = function(event) {
-      updateFunc();
     };
     textarea.addEventListener("keydown", function(event) {
       if (event.key == "Enter") {
