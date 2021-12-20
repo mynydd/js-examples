@@ -1,12 +1,12 @@
 $(document).ready(function() {
 
-  var valueAfterDelay = function(value, interested) {
+  let valueAfterDelay = function(value, interested) {
     setTimeout(function() {
       interested(value);
     }, 100);
   };
 
-  var exampleList = [{
+  let exampleList = [{
       name: "trekking poles",
       notes: "Should be collapsible into 3 or 4 sections to make stowage inside your rucksack easier. Expect to pay approx £80",
       urls: ["https://www.cotswoldoutdoor.com/c/equipment/walking-trekking-poles.html"]
@@ -33,26 +33,23 @@ $(document).ready(function() {
     },
   ];
 
-  var listItems = document.querySelector("#listItems");
-  var listName = document.querySelector("#listName");
+  let listItems = document.querySelector("#listItems");
+  let listName = document.querySelector("#listName");
 
-  var updateNotesFor = function(itemId, newNotes) {
-    exampleList.forEach( function update(listItem) {
-      if ( encodeURIComponent(listItem.name) === itemId ) {
-        listItem.notes = newNotes;
-      }
-    });
+  let generateIdValueUsing = function(input) {
+    const regex = /\W/ig;
+    return "id" + input.replaceAll(regex, '');
   };
 
-  var createChildOf = function(parent, elementType, classNames, attributes) {
-    var newElement = document.createElement(elementType);
+  let createChildOf = function(parent, elementType, classNames, attributes) {
+    let newElement = document.createElement(elementType);
     if (classNames) {
       classNames.forEach(function(name) {
         newElement.classList.add(name);
       });
     }
     if (attributes) {
-      for (var p in attributes) {
+      for (let p in attributes) {
         newElement.setAttribute(p, attributes[p]);
       }
     }
@@ -60,110 +57,115 @@ $(document).ready(function() {
     return newElement;
   }
 
-  var appendTextNodeTo = function(parent, text) {
+  let appendTextNodeTo = function(parent, text) {
     parent.appendChild(document.createTextNode(text));
   };
 
-  var addListItem = function(listItem) {
-    var isFirstItem = listItems.children.length == 0;
-    var itemId = encodeURIComponent(listItem.name);
-    var card = createChildOf(listItems, "div", ["card", "border-info", "mb-2"]);
-    var cardHeader = createChildOf(card, "div", ["card-header"], {
+  let addListItem = function(listItem) {
+    let isFirstItem = listItems.children.length == 0;
+    let itemId = generateIdValueUsing(listItem.name);
+    let card = createChildOf(listItems, "div", ["card", "border-info", "mb-2"]);
+    let cardHeader = createChildOf(card, "div", ["card-header"], {
       "role": "tab",
       "id": "heading-for-" + itemId
     });
-    var heading = createChildOf(cardHeader, "h5", ["mb-0"]);
-    var anchor = createChildOf(heading, "a", undefined, {
+    let heading = createChildOf(cardHeader, "h5", ["mb-0"]);
+    let anchor = createChildOf(heading, "a", undefined, {
       "data-toggle": "collapse",
       "aria-controls": itemId,
       "href": "#" + itemId
     });
     appendTextNodeTo(anchor, listItem.name);
-    var cardBlockContainer = createChildOf(card, "div", isFirstItem ? ["collapse", "show"] : ["collapse"], {
+    let cardBlockContainer = createChildOf(card, "div", isFirstItem ? ["collapse", "show"] : ["collapse"], {
       "role": "tabpanel",
       "data-parent": "#listItems",
       "aria-labelledby": "heading-for-" + itemId,
       "id": itemId
     });
-    var cardBlock = createChildOf(cardBlockContainer, "div", ["card-block"]);
-    var cardBody = createChildOf(cardBlock, "div", ["card-body"]);
-    var cardText = createChildOf(cardBody, "p", ["card-text"]);
+    let cardBlock = createChildOf(cardBlockContainer, "div", ["card-block"]);
+    let cardBody = createChildOf(cardBlock, "div", ["card-body"]);
+    let cardText = createChildOf(cardBody, "p", ["card-text"]);
     appendTextNodeTo(cardText, listItem.notes);
-    listItem.urls.forEach( function(url) {
-      var anchor = createChildOf(cardBody, "a", ["card-link", "d-block", "ml-0"], { "href": url });
-      appendTextNodeTo(anchor, url);
-    });
-    var editButton = createChildOf(cardBody, "button", ["btn", "btn-primary"], {
+    let editButton = createChildOf(cardBody, "button", ["btn", "btn-primary", "mb-2"], {
       "type":"button",
       "data-toggle":"modal",
       "data-target": "#edit-" + itemId});
     appendTextNodeTo(editButton, "Edit");
-    var modal = createChildOf(cardBody, "div", ["modal", "fade"], {
+    listItem.urls.forEach( function(url) {
+      let anchor = createChildOf(cardBody, "a", ["card-link", "d-block", "ml-0"], { "href": url });
+      appendTextNodeTo(anchor, url);
+    });
+    let modal = createChildOf(cardBody, "div", ["modal", "fade"], {
       "id": "edit-" + itemId });
-    var modalDlg = createChildOf(modal, "div", ["modal-dialog"]);
-    var modalContent = createChildOf(modalDlg, "div", ["modal-content"]);
-    var modalHeader = createChildOf(modalContent, "div", ["modal-header"]);
-    var modalTitle = createChildOf(modalHeader, "h5", ["modal-title"]);
+    let modalDlg = createChildOf(modal, "div", ["modal-dialog"]);
+    let modalContent = createChildOf(modalDlg, "div", ["modal-content"]);
+    let modalHeader = createChildOf(modalContent, "div", ["modal-header"]);
+    let modalTitle = createChildOf(modalHeader, "h5", ["modal-title"]);
     appendTextNodeTo(modalTitle, "Edit: " + listItem.name);
-    var modalBody = createChildOf(modalContent, "div", ["modal-body"]);
-    var form = createChildOf(modalBody, "form");
-    var fieldset = createChildOf(form, "fieldset", ["form-group"]);
-    var notesDiv = createChildOf(fieldset, "div", ["form-group"]);
-    var label = createChildOf(notesDiv, "label", undefined, {
+    let modalBody = createChildOf(modalContent, "div", ["modal-body"]);
+    let form = createChildOf(modalBody, "form");
+    let fieldset = createChildOf(form, "fieldset", ["form-group"]);
+    let notesDiv = createChildOf(fieldset, "div", ["form-group"]);
+    let label = createChildOf(notesDiv, "label", undefined, {
       "for": "edit-" + itemId + "-notes" });
     appendTextNodeTo(label, "notes");
-    var textarea = createChildOf(notesDiv, "textarea", ["form-control"], {
+    let textarea = createChildOf(notesDiv, "textarea", ["form-control"], {
       "id": "edit-" + itemId + "-notes" });
     appendTextNodeTo(textarea, listItem.notes);
-
-
-    var modalFooter = createChildOf(modalContent, "div", ["modal-footer"]);
-    var cancelButton = createChildOf(modalFooter, "button", ["btn", "btn-secondary"], {
+    let modalFooter = createChildOf(modalContent, "div", ["modal-footer"]);
+    let cancelButton = createChildOf(modalFooter, "button", ["btn", "btn-secondary"], {
       "data-dismiss":"modal"});
     appendTextNodeTo(cancelButton, "Cancel");
-    var saveButton = createChildOf(modalFooter, "button", ["btn", "btn-secondary"], {
+    let saveButton = createChildOf(modalFooter, "button", ["btn", "btn-secondary"], {
       "data-dismiss":"modal"});
     appendTextNodeTo(saveButton, "Save");
-    saveButton.onclick = function(event) {
-      updateNotesFor(itemId, textarea.value);
+    let updateFunc = function() {
+      listItem.notes = textarea.value;
+      textarea.replaceChildren(listItem.notes);
+      cardText.replaceChildren(listItem.notes);
     };
+    saveButton.onclick = function(event) {
+      updateFunc();
+    };
+    textarea.addEventListener("keydown", function(event) {
+      if (event.key == "Enter") {
+        saveButton.onclick.apply(saveButton);
+        $("#" + modal.getAttribute("id")).modal('hide');
+      }
+    });
+    $("#" + modal.getAttribute("id")).on('hidden.bs.modal', function (e) {
+      window.setTimeout(() => anchor.focus(), 0);
+    });
   };
 
-  var removeChildren = function(parent) {
-    while (parent.firstChild) {
-      parent.removeChild(parent.firstChild);
-    }
-  }
-
-  var layoutList = function(name, list) {
-    removeChildren(listItems);
-    removeChildren(listName);
-    appendTextNodeTo(listName, name);
+  let layoutList = function(name, list) {
+    listItems.replaceChildren();
+    listName.replaceChildren(name);
     listName.classList.remove("d-none");
     list.forEach(function(listItem) {
       addListItem(listItem);
     });
   };
 
-  var showError = function(error) {
+  let showError = function(error) {
     alert(error);
   };
 
-  var fetchList = function(listName) {
+  let fetchList = function(listName) {
     return new Promise(function(succeed, fail) {
       valueAfterDelay([listName, exampleList], succeed);
     });
   };
 
-  var addListOption = function(listName) {
-    var dropdownMenuOfLists = document.querySelector(".dropdown-menu");
-    var option = document.createElement("a");
+  let addListOption = function(listName) {
+    let dropdownMenuOfLists = document.querySelector(".dropdown-menu");
+    let option = document.createElement("a");
     option.textContent = listName;
     option.classList.add("dropdown-item");
     dropdownMenuOfLists.appendChild(option);
   };
 
-  var fetchListNames = function() {
+  let fetchListNames = function() {
     return new Promise(function(succeed, fail) {
       valueAfterDelay(["a", "b", "c"], succeed);
     });
