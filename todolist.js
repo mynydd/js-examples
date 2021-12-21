@@ -1,11 +1,5 @@
 $(document).ready(function() {
 
-  let valueAfterDelay = function(value, interested) {
-    setTimeout(function() {
-      interested(value);
-    }, 100);
-  };
-
   let exampleList = [{
       name: "trekking poles",
       notes: "Should be collapsible into 3 or 4 sections to make stowage inside your rucksack easier. Expect to pay approx £80",
@@ -33,8 +27,11 @@ $(document).ready(function() {
     },
   ];
 
-  let listItems = document.querySelector("#listItems");
-  let listName = document.querySelector("#listName");
+  let valueAfterDelay = function(value, interested) {
+    setTimeout(function() {
+      interested(value);
+    }, 500);
+  };
 
   let generateIdValueUsing = function(input) {
     const regex = /\W/ig;
@@ -61,7 +58,7 @@ $(document).ready(function() {
     parent.appendChild(document.createTextNode(text));
   };
 
-  let addListItem = function(listItem) {
+  let addListItem = function(listItem, listItems) {
     let isFirstItem = listItems.children.length == 0;
     let itemId = generateIdValueUsing(listItem.name);
     let card = createChildOf(listItems, "div", ["card", "border-info", "mb-2"]);
@@ -87,16 +84,20 @@ $(document).ready(function() {
     let cardText = createChildOf(cardBody, "p", ["card-text"]);
     appendTextNodeTo(cardText, listItem.notes);
     let editButton = createChildOf(cardBody, "button", ["btn", "btn-primary", "mb-2"], {
-      "type":"button",
-      "data-toggle":"modal",
-      "data-target": "#edit-" + itemId});
+      "type": "button",
+      "data-toggle": "modal",
+      "data-target": "#edit-" + itemId
+    });
     appendTextNodeTo(editButton, "Edit");
-    listItem.urls.forEach( function(url) {
-      let anchor = createChildOf(cardBody, "a", ["card-link", "d-block", "ml-0"], { "href": url });
+    listItem.urls.forEach(function(url) {
+      let anchor = createChildOf(cardBody, "a", ["card-link", "d-block", "ml-0"], {
+        "href": url
+      });
       appendTextNodeTo(anchor, url);
     });
     let modal = createChildOf(cardBody, "div", ["modal", "fade"], {
-      "id": "edit-" + itemId });
+      "id": "edit-" + itemId
+    });
     let modalDlg = createChildOf(modal, "div", ["modal-dialog"]);
     let modalContent = createChildOf(modalDlg, "div", ["modal-content"]);
     let modalHeader = createChildOf(modalContent, "div", ["modal-header"]);
@@ -107,18 +108,22 @@ $(document).ready(function() {
     let fieldset = createChildOf(form, "fieldset", ["form-group"]);
     let notesDiv = createChildOf(fieldset, "div", ["form-group"]);
     let label = createChildOf(notesDiv, "label", undefined, {
-      "for": "edit-" + itemId + "-notes" });
+      "for": "edit-" + itemId + "-notes"
+    });
     appendTextNodeTo(label, "notes");
     let textarea = createChildOf(notesDiv, "textarea", ["form-control"], {
-      "id": "edit-" + itemId + "-notes" });
+      "id": "edit-" + itemId + "-notes"
+    });
     appendTextNodeTo(textarea, listItem.notes);
     let modalFooter = createChildOf(modalContent, "div", ["modal-footer"]);
     let cancelButton = createChildOf(modalFooter, "button", ["btn", "btn-secondary"], {
-      "data-dismiss":"modal"});
+      "data-dismiss": "modal"
+    });
     appendTextNodeTo(cancelButton, "Cancel");
     cancelButton.onclick = event => textarea.value = listItem.notes;
     let saveButton = createChildOf(modalFooter, "button", ["btn", "btn-secondary"], {
-      "data-dismiss":"modal"});
+      "data-dismiss": "modal"
+    });
     appendTextNodeTo(saveButton, "Save");
     saveButton.onclick = function(event) {
       listItem.notes = textarea.value;
@@ -131,17 +136,22 @@ $(document).ready(function() {
         $("#" + modal.getAttribute("id")).modal('hide');
       }
     });
-    $("#" + modal.getAttribute("id")).on('hidden.bs.modal', function (e) {
+    $("#" + modal.getAttribute("id")).on('hidden.bs.modal', function(e) {
       window.setTimeout(() => anchor.focus(), 0);
     });
   };
 
   let layoutList = function(name, list) {
+    let listItems = document.querySelector("#listItems");
+    let listName = document.querySelector("#listName");
+    let listHeaderChildren = document.querySelectorAll("#listHeader > *");
+    Array.prototype.forEach.call(listHeaderChildren, function(listHeaderItem) {
+      listHeaderItem.classList.remove("d-none");
+    });
     listItems.replaceChildren();
     listName.replaceChildren(name);
-    listName.classList.remove("d-none");
     list.forEach(function(listItem) {
-      addListItem(listItem);
+      addListItem(listItem, listItems);
     });
   };
 

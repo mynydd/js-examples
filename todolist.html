@@ -9,10 +9,8 @@
 
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
   <title>Paul's Lists</title>
 </head>
-
 <body>
   <div class="container">
     <div class="row">
@@ -37,10 +35,9 @@
         </nav>
       </section>
     </div>
-    <div class="d-flex justify-content-between mb-2">
-      <!-- should be a d-none class here -->
-      <h2 id="listName" class="d-none">List item title here</h2>
-      <button type="button" class="btn btn-primary">Add Item</button>
+    <div id="listHeader" class="d-flex justify-content-between mb-2">
+      <h2 id="listName" class="d-none">List Title</h2>
+      <button type="button" class="btn btn-primary d-none">Add Item</button>
     </div>
     <div class="row">
       <section class="col-12">
