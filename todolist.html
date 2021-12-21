@@ -18,27 +18,32 @@
     <div class="row">
       <section class="col-12">
         <nav class="navbar navbar-expand-sm bg-primary navbar-dark mb-2">
-          <div class="container">
-            <div class="navbar-brand">Paul's Lists</div>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsableNav" aria-controls="collapsableNav" aria-expanded="false">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="collapsableNav">
-              <div class="navbar-nav ml-auto">
-                <a href="#" class="nav-item nav-link active">Home</a>
-                <div class="dropdown">
-                  <a href="#" class="nav-item nav-link dropdown-toggle" data-toggle="dropdown" id="listsDropdown" aria-haspopup="true" aria-expanded="false" href="#">Lists</a>
-                  <div class="dropdown-menu" aria-labelledby="listsDropdown">
-                    <a class="dropdown-item" href="#">New...</a>
-                  </div>
+          <div class="navbar-brand">Paul's Lists</div>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsableNav" aria-controls="collapsableNav" aria-expanded="false">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="collapsableNav">
+            <div class="navbar-nav ml-auto">
+              <a href="#" class="nav-item nav-link active">Home</a>
+              <div class="dropdown">
+                <a href="#" class="nav-item nav-link dropdown-toggle" data-toggle="dropdown" id="listsDropdown" aria-haspopup="true" aria-expanded="false" href="#">Lists</a>
+                <div class="dropdown-menu" aria-labelledby="listsDropdown">
+                  <a class="dropdown-item" href="#">New...</a>
                 </div>
-                <a href="#" class="nav-item nav-link">About</a>
               </div>
-              <!--navbar-nav -->
-            </div><!-- navbar-collapse -->
-          </div>
+              <a href="#" class="nav-item nav-link">About</a>
+            </div> <!-- collapsableNav -->
+          </div><!-- navbar -->
         </nav>
-        <h2 id="listName" class="d-none"></h2>
+      </section>
+    </div>
+    <div class="d-flex justify-content-between mb-2">
+      <!-- should be a d-none class here -->
+      <h2 id="listName" class="d-none">List item title here</h2>
+      <button type="button" class="btn btn-primary">Add Item</button>
+    </div>
+    <div class="row">
+      <section class="col-12">
         <div id="listItems" role="tablist" aria-multiselectable="true">
         </div>
       </section>
