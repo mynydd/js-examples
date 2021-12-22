@@ -203,15 +203,22 @@
 
   let addListOption = function(listName) {
     let dropdownMenuOfLists = document.querySelector(".dropdown-menu");
-    let option = document.createElement("a");
+    let option = createChildOf(dropdownMenuOfLists, "a", ["dropdown-item"], { "href": "#" });
     option.textContent = listName;
-    option.classList.add("dropdown-item");
-    dropdownMenuOfLists.appendChild(option);
+    option.addEventListener("click", function(event) {
+      fetchList(listName).then(
+        function(list) {
+          layoutList(list[0], list[1]);
+        },
+        function(error) {
+          showError(error);
+        });
+    });
   };
 
   let fetchListNames = function() {
     return new Promise(function(succeed, fail) {
-      valueAfterDelay(["a", "b", "c"], succeed);
+      valueAfterDelay(["Plas y Brenin Essentials"], succeed);
     });
   };
 
@@ -222,14 +229,6 @@
     },
     function(error) {
       alert(error);
-    });
-
-  fetchList("Plas y Brenin Essentials").then(
-    function(list) {
-      layoutList(list[0], list[1]);
-    },
-    function(error) {
-      showError(error);
     });
 
   let addListItemNameInputListener = function(event) {
