@@ -109,18 +109,18 @@
     let cardBody = createChildOf(cardBlock, "div", ["card-body"]);
     let cardText = createChildOf(cardBody, "p", ["card-text"]);
     appendTextNodeTo(cardText, listItem.notes);
-    let editButton = createChildOf(cardBody, "button", ["btn", "btn-primary", "mb-2"], {
-      "type": "button",
-      "data-toggle": "modal",
-      "data-target": "#edit-" + itemId
-    });
-    appendTextNodeTo(editButton, "Edit");
     listItem.urls.forEach(function(url) {
       let anchor = createChildOf(cardBody, "a", ["card-link", "d-block", "ml-0"], {
         "href": url
       });
       appendTextNodeTo(anchor, url);
     });
+    let editButton = createChildOf(cardBody, "button", ["btn", "btn-primary", "mt-1"], {
+      "type": "button",
+      "data-toggle": "modal",
+      "data-target": "#edit-" + itemId
+    });
+    appendTextNodeTo(editButton, "Edit");
     let modal = createChildOf(cardBody, "div", ["modal", "fade"], {
       "id": "edit-" + itemId
     });
