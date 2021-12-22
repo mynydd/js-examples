@@ -4,26 +4,31 @@
 
 (function() {
   let exampleList = [{
+      id: 1,
       name: "trekking poles",
       notes: "Should be collapsible into 3 or 4 sections to make stowage inside your rucksack easier. Expect to pay approx £80",
       urls: ["https://www.cotswoldoutdoor.com/c/equipment/walking-trekking-poles.html"]
     },
     {
+      id: 2,
       name: "crampon bag",
       notes: "Expect to pay approx £14",
       urls: []
     },
     {
+      id: 3,
       name: "snow/ski goggles",
       notes: "Look for OTG goggles. Dual pane (2 layer lenses) is recommended. Perhaps 30% VLT",
       urls: ["https://skitripguide.com/best-otg-goggles-for-skiing/", "https://www.glisshop.co.uk/accessories/goggles/otg/"]
     },
     {
+      id: 4,
       name: "waterproof gloves",
       notes: "At least two pairs are essential. They should be dexterous enough that you can put crampons on whilst wearing them. The Mountain Equipment Guide or similar is recommended. The Mountain Equipment gloves are £80 for one pair.",
       urls: ["https://www.wwarn.org"]
     },
     {
+      id: 5,
       name: "mid-layers",
       notes: "A couple of mid weight layers, ideally fleece, gives more flexibility for managing your temperature rather than one thick one.",
       urls: []
@@ -38,16 +43,6 @@
     setTimeout(function() {
       interested(value);
     }, 500);
-  };
-
-  /**
-   * Returns a string value which is composed using the specified
-   * input and is suitable for using as an 'id' value for a
-   * DOM element.
-   */
-  let generateIdValueUsing = function(input) {
-    const regex = /\W/ig;
-    return "id" + input.replaceAll(regex, '');
   };
 
   /**
@@ -109,7 +104,7 @@
   let addListItemToDOM = function(listItem) {
     let listItems = document.getElementById("listItems");
     let isFirstItem = listItems.children.length == 0;
-    let itemId = generateIdValueUsing(listItem.name);
+    let itemId = "item-" + listItem.id;
     let card = createChildOf(listItems, "div", ["card", "border-info", "mb-2"]);
     let cardHeader = createChildOf(card, "div", ["card-header"], {
       "role": "tab",
@@ -156,6 +151,7 @@
     let nameFormGroup = addFormGroup(fieldset, "edit-name-" + itemId, "input", "name", listItem.name,
       function(inputControl) {
         inputControl.type = "text";
+        //inputControl.addEventListener("input", buildNameInputListenerFunc(inputControl);
       },
       function(newValue) {
         listItem.name = newValue;
@@ -261,19 +257,18 @@
     });
 
   let addListItemNameInputListener = function(event) {
-    // To rebuild this list every time is extremly inefficient.
-    // It would be better to add this event listener 'on the fly',
-    // with a constructed list of 'taken'.
-    // However this would require removal of the event listener when
-    // the dialog is closed/hidden.
-    // Not impossible!
+    // It's inefficient to rebuild the 'taken' list every time
+    // this function is called.
+    // An alternative would be to build this function when
+    // the 'add item' dialog is shown, building it with a snapshot of
+    // the 'taken' names, at that point.
     let addListItemName = document.getElementById("addListItemName");
     let addListItemButton = document.getElementById("addListItemButton");
     let addListItemNameText = document.getElementById("addListItemNameText");
-    let taken = exampleList.map(listItem => generateIdValueUsing(listItem.name));
+    let taken = exampleList.map(listItem => listItem.name);
     let candidateName = addListItemName.value.trim()
     if ( candidateName ) {
-      if ( taken.indexOf(generateIdValueUsing(candidateName)) > -1 ) {
+      if ( taken.indexOf(candidateName) > -1 ) {
         addListItemButton.classList.add("disabled");
         addListItemNameText.textContent = "A list item with this name already exists";
       }
@@ -293,9 +288,10 @@
 
   document.getElementById("addListItemButton").addEventListener("click", function(event) {
     let newListItem = {
-      "name":   document.getElementById("addListItemName").value,
-      "notes":  document.getElementById("addListItemNotes").value,
-      "urls": [ document.getElementById("addListItemUrl").value ]
+      "id": exampleList.map( item => item.id ).reduce( (max, id) => id > max ? id : max, 0) + 1,
+      "name":   document.getElementById("addListItemName").value.trim(),
+      "notes":  document.getElementById("addListItemNotes").value.trim(),
+      "urls": [ document.getElementById("addListItemUrl").value.trim() ]
     };
     exampleList.push(newListItem);
     addListItemToDOM(newListItem);
