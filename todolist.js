@@ -78,6 +78,29 @@
     parent.appendChild(document.createTextNode(text));
   };
 
+  /**
+   * Adds a form-group with a label and input control, with input control being passed to the initialiser callback
+   * once constructed, returning an object with 'onSave' and 'onCancel' properties.
+   * 'onSave' can be invoked without arguments and simply invokes the callMe callback with the current value of the
+   * input control.
+   * 'onCancel' requires an argument, specifically the value to which the input control should be reverted.
+   */
+  let addFormGroup = function(fieldset, id, inputControlType, labelText, value, initialiser, callMeOnSaveWithNewValue) {
+    let formGroup = createChildOf(fieldset, "div", ["form-group"]);
+    createChildOf(formGroup, "label", ["form-control-label"], {
+      "for": id
+    }).textContent = labelText;
+    let inputControl = createChildOf(formGroup, inputControlType, ["form-control"], {
+      "id": id
+    });
+    inputControl.value = value;
+    initialiser(inputControl);
+    return {
+      "onSave": function() { callMeOnSaveWithNewValue(inputControl.value) },
+      "onCancel": function(valueToRestore) { inputControl.value = valueToRestore; }
+    };
+  };
+
    /**
    * Adds the specified list item to the DOM. The listItem
    * object is expected to have the following properties: name
@@ -93,12 +116,12 @@
       "id": "heading-for-" + itemId
     });
     let heading = createChildOf(cardHeader, "h5", ["mb-0"]);
-    let anchor = createChildOf(heading, "a", undefined, {
+    let headingAnchor = createChildOf(heading, "a", undefined, {
       "data-toggle": "collapse",
       "aria-controls": itemId,
       "href": "#" + itemId
     });
-    appendTextNodeTo(anchor, listItem.name);
+    appendTextNodeTo(headingAnchor, listItem.name);
     let cardBlockContainer = createChildOf(card, "div", isFirstItem ? ["collapse", "show"] : ["collapse"], {
       "role": "tabpanel",
       "data-parent": "#listItems",
@@ -127,45 +150,50 @@
     });
     let modalDlg = createChildOf(modal, "div", ["modal-dialog"]);
     let modalContent = createChildOf(modalDlg, "div", ["modal-content"]);
-    let modalHeader = createChildOf(modalContent, "div", ["modal-header"]);
-    let modalTitle = createChildOf(modalHeader, "h5", ["modal-title"]);
-    appendTextNodeTo(modalTitle, "Edit: " + listItem.name);
     let modalBody = createChildOf(modalContent, "div", ["modal-body"]);
     let form = createChildOf(modalBody, "form");
     let fieldset = createChildOf(form, "fieldset", ["form-group"]);
-    let notesDiv = createChildOf(fieldset, "div", ["form-group"]);
-    let label = createChildOf(notesDiv, "label", ["form-control-label"], {
-      "for": "edit-" + itemId + "-notes"
-    });
-    appendTextNodeTo(label, "notes");
-    let textarea = createChildOf(notesDiv, "textarea", ["form-control"], {
-      "id": "edit-" + itemId + "-notes"
-    });
-    appendTextNodeTo(textarea, listItem.notes);
+    let nameFormGroup = addFormGroup(fieldset, "edit-name-" + itemId, "input", "name", listItem.name,
+      function(inputControl) {
+        inputControl.type = "text";
+      },
+      function(newValue) {
+        listItem.name = newValue;
+        headingAnchor.replaceChildren(newValue);
+      });
+    let notesFormGroup = addFormGroup(fieldset, "edit-notes-" + itemId, "textarea", "notes", listItem.notes,
+      function(inputControl) {
+        inputControl.addEventListener("keydown", function(event) {
+          if (event.key == "Enter") {
+            saveButton.onclick.apply(saveButton);
+            $("#" + modal.getAttribute("id")).modal('hide');
+          }
+        });
+      },
+      function(newValue) {
+        listItem.notes = newValue;
+        cardText.replaceChildren(newValue);
+      });
     let modalFooter = createChildOf(modalContent, "div", ["modal-footer"]);
     let cancelButton = createChildOf(modalFooter, "button", ["btn", "btn-secondary"], {
       "data-dismiss": "modal"
     });
     appendTextNodeTo(cancelButton, "Cancel");
-    cancelButton.onclick = event => textarea.value = listItem.notes;
+    cancelButton.onclick = function(event) {
+      nameFormGroup.onCancel(listItem.name);
+      notesFormGroup.onCancel(listItem.notes);
+    };
     let saveButton = createChildOf(modalFooter, "button", ["btn", "btn-secondary"], {
       "data-dismiss": "modal"
     });
     appendTextNodeTo(saveButton, "Save");
     saveButton.onclick = function(event) {
-      listItem.notes = textarea.value;
-      textarea.replaceChildren(listItem.notes);
-      cardText.replaceChildren(listItem.notes);
+      nameFormGroup.onSave();
+      notesFormGroup.onSave();
     };
-    textarea.addEventListener("keydown", function(event) {
-      if (event.key == "Enter") {
-        saveButton.onclick.apply(saveButton);
-        $("#" + modal.getAttribute("id")).modal('hide');
-      }
-    });
     $("#" + modal.getAttribute("id")).on('hidden.bs.modal', function(e) {
-      // Directly calling 'anchor.focus()' wasn't working, so...
-      window.setTimeout(() => anchor.focus(), 0);
+      // Directly calling 'headingAnchor.focus()' wasn't working, so...
+      window.setTimeout(() => headingAnchor.focus(), 0);
     });
   };
 
