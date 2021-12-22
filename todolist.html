@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   <title>Paul's Lists</title>
 </head>
+
 <body>
   <div class="container">
     <div class="row">
@@ -37,7 +38,42 @@
     </div>
     <div id="listHeader" class="d-flex justify-content-between mb-2">
       <h2 id="listName" class="d-none">List Title</h2>
-      <button type="button" class="btn btn-primary d-none">Add Item</button>
+      <button type="button" class="btn btn-primary d-none" data-toggle="modal" data-target="#addListItemModalDialog">Add Item</button>
+      <div class="modal fade" id="addListItemModalDialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Add an item</h5>
+            </div>
+            <div class="modal-body">
+              <form>
+                <fieldset class="form-group">
+                  <div class="form-group">
+                    <label for="addListItemName" class="form-control-label">name</label>
+                    <input class="form-control"
+                      id="addListItemName" type="text">
+                    </input>
+                    <small id="addListItemNameText" class="form-text text-muted">Mandatory</small>
+                  </div>
+                  <div class="form-group">
+                    <label for="addListItemNotes" class="form-control-label">notes</label>
+                    <textarea class="form-control"
+                      id="addListItemNotes"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="addListItemUrl" class="form-control-label">URL</label>
+                    <input class="form-control"
+                      id="addListItemUrl" type="text"></input>
+                  </div>
+                </fieldset>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button id="cancelAddItem" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+              <button id="addListItemButton" class="btn btn-secondary disabled" data-dismiss="modal">Add</button></div>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="row">
       <section class="col-12">
@@ -52,6 +88,7 @@
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-  <script src="todolist.js"></script>
+  <script src="todolist.js" defer></script>
 </body>
+
 </html>
