@@ -115,7 +115,8 @@
       });
       appendTextNodeTo(anchor, url);
     });
-    let editButton = createChildOf(cardBody, "button", ["btn", "btn-primary", "mt-1"], {
+    let cardFooter = createChildOf(cardBlock, "div", [ "card-footer" ]);
+    let editButton = createChildOf(cardFooter, "button", ["btn", "btn-primary", "mt-1"], {
       "type": "button",
       "data-toggle": "modal",
       "data-target": "#edit-" + itemId
