@@ -74,13 +74,42 @@
   };
 
   /**
-   * Adds a form-group with a label and input control, with input control being passed to the initialiser callback
-   * once constructed, returning an object with 'onSave' and 'onCancel' properties.
-   * 'onSave' can be invoked without arguments and simply invokes the callMe callback with the current value of the
-   * input control.
-   * 'onCancel' requires an argument, specifically the value to which the input control should be reverted.
+   * Constructs a FormGroup instance responsible for
+   * ensuring specific behaviours when Load and Save
+   * events occur.
+   * Specifically, in the case of a Load event,
+   * the instance is responsible for
+   * correctly initialising the inputControl.
+   * In the case of a Save event, the instance is
+   * responsible for communicating the current value to
+   * the saveCallback.
    */
-  let addFormGroup = function(fieldset, id, inputControlType, labelText, value, initialiser, callMeOnSaveWithNewValue) {
+  function FormGroup(inputControl, saveCallback, initialValue) {
+    this.inputControl = inputControl;
+    this.saveCallback = saveCallback;
+    this.initialValue = initialValue;
+  }
+
+  FormGroup.prototype.onLoad = function() {
+    this.inputControl.value = this.initialValue;
+  }
+
+  FormGroup.prototype.onSave = function() {
+    this.inputControl.value = this.inputControl.value.trim();
+    this.saveCallback(this.inputControl.value);
+    this.initialValue = this.inputControl.value;
+  }
+
+  FormGroup.prototype.setInputChangeListener = function(inputChangeListener) {
+    let inputControl = this.inputControl;
+    this.inputControl.addEventListener("input", function(event) { inputChangeListener(inputControl.value.trim()) });
+  }
+
+  /**
+   * Adds a form-group with a label and input control, with input control being passed to the initialiser callback
+   * once constructed, returning an instance of FormGroup.
+   */
+  let addFormGroup = function(fieldset, id, inputControlType, labelText, initialValue, initialiser, saveCallback) {
     let formGroup = createChildOf(fieldset, "div", ["form-group"]);
     createChildOf(formGroup, "label", ["form-control-label"], {
       "for": id
@@ -88,12 +117,8 @@
     let inputControl = createChildOf(formGroup, inputControlType, ["form-control"], {
       "id": id
     });
-    inputControl.value = value;
     initialiser(inputControl);
-    return {
-      "onSave": function() { callMeOnSaveWithNewValue(inputControl.value) },
-      "onCancel": function(valueToRestore) { inputControl.value = valueToRestore; }
-    };
+    return new FormGroup(inputControl, saveCallback, initialValue);
   };
 
    /**
@@ -149,16 +174,15 @@
     let form = createChildOf(modalBody, "form");
     let fieldset = createChildOf(form, "fieldset", ["form-group"]);
     let nameFormGroup = addFormGroup(fieldset, "edit-name-" + itemId, "input", "name", listItem.name,
-      function(inputControl) {
+      function(inputControl) { // once-only initialisation callback
         inputControl.type = "text";
-        //inputControl.addEventListener("input", buildNameInputListenerFunc(inputControl);
       },
-      function(newValue) {
+      function(newValue) { // saveCallback
         listItem.name = newValue;
         headingAnchor.replaceChildren(newValue);
       });
     let notesFormGroup = addFormGroup(fieldset, "edit-notes-" + itemId, "textarea", "notes", listItem.notes,
-      function(inputControl) {
+      function(inputControl) { // once-only initialisation callback
         inputControl.addEventListener("keydown", function(event) {
           if (event.key == "Enter") {
             saveButton.onclick.apply(saveButton);
@@ -166,7 +190,7 @@
           }
         });
       },
-      function(newValue) {
+      function(newValue) { // saveCallback
         listItem.notes = newValue;
         cardText.replaceChildren(newValue);
       });
@@ -175,10 +199,6 @@
       "data-dismiss": "modal"
     });
     appendTextNodeTo(cancelButton, "Cancel");
-    cancelButton.onclick = function(event) {
-      nameFormGroup.onCancel(listItem.name);
-      notesFormGroup.onCancel(listItem.notes);
-    };
     let saveButton = createChildOf(modalFooter, "button", ["btn", "btn-secondary"], {
       "data-dismiss": "modal"
     });
@@ -187,6 +207,18 @@
       nameFormGroup.onSave();
       notesFormGroup.onSave();
     };
+    nameFormGroup.setInputChangeListener( function onChanged(newName) {
+      if (newName) {
+        saveButton.classList.remove("disabled");
+      }
+      else {
+        saveButton.classList.add("disabled");
+      }
+    });
+    $("#" + modal.getAttribute("id")).on('show.bs.modal', function(e) {
+      nameFormGroup.onLoad();
+      notesFormGroup.onLoad();
+    });
     $("#" + modal.getAttribute("id")).on('hidden.bs.modal', function(e) {
       // Directly calling 'headingAnchor.focus()' wasn't working, so...
       window.setTimeout(() => headingAnchor.focus(), 0);
